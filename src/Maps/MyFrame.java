@@ -46,6 +46,7 @@ public class MyFrame extends JFrame implements MouseListener,ComponentListener {
 	int imgheight;// The map image height
 	int imgwidth;// The map image width
 
+	
 	/**
 	 * 
 	 * @param path - The image's path.
