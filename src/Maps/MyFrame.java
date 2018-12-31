@@ -5,6 +5,7 @@ import java.awt.event.*;
 import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -28,20 +29,20 @@ public class MyFrame extends JFrame implements MouseListener,ComponentListener {
 	private Map map; 
 	private BufferedImage playerImg; //An Icon for the pacman
 	private BufferedImage FruitImg;// An Icon for the Fruit
+	private BufferedImage pacmanImg;
+	private BufferedImage ghostImg;
 	//Menu Items
 	private MenuItem loadCSV;
 	private MenuItem run;
-	private MenuItem player;
-	private MenuItem clear;
 	//will tell us whether to add a pacman or a fruit when pressed
 	private boolean playerButton = false;
 	//ID for fruit and pamans in case the user is drawing it on the screen
-	private Game game;
 	double height;
 	double width;
 	int imgheight;// The map image height
 	int imgwidth;// The map image width
-	Play play;
+	private Play play;
+	private boolean player;
 
 	/**
 	 * 
@@ -59,11 +60,8 @@ public class MyFrame extends JFrame implements MouseListener,ComponentListener {
 		//adding the image to the frame
 		JLabel label1 = new JLabel(new ImageIcon(myImage));
 		add(label1);
-		play = new Play(path);
-		play.setIDs(313340267,204324305,204397715);
-		game = new Game();
 		setActionListeners();//adding action listeners to the menu Items
-		setPacFruImg();//setting the image of the pacman and the fruit
+		setImages();//setting the image of the pacman and the fruit
 		this.addMouseListener(this); //adding mouselisteners
 		this.addComponentListener(this);
 	}
@@ -80,32 +78,39 @@ public class MyFrame extends JFrame implements MouseListener,ComponentListener {
 		run = new MenuItem("Run");
 		menu1.add(loadCSV);
 		menu1.add(run);
-		Menu menu2 = new Menu("Draw Images");  
-		player = new MenuItem("Pacman");
-		clear = new MenuItem("clear");
-		menu2.add(player);
-		menu2.add(clear);
 		menuBar.add(menu1);
-		menuBar.add(menu2);
 		this.setMenuBar(menuBar);
 	}
 
 	/**
 	 * setting the Icons for pacmans and fruits.
 	 */
-	public void setPacFruImg() {
+	public void setImages() {
 		try {
-			File file = new File("Pacman.jpg");
+			File file = new File("data//pickachu.jpg");
 			playerImg = ImageIO.read(file);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		try {
-			File file = new File("strawberry-icon.jpg");
+			File file = new File("data//strawberry.jpg");
 			FruitImg = ImageIO.read(file);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		try {
+			File file = new File("data//jigglypuff.jpg");
+			pacmanImg = ImageIO.read(file);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			File file = new File("data//Gastly.jpg");
+			ghostImg = ImageIO.read(file);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	/**
@@ -121,36 +126,36 @@ public class MyFrame extends JFrame implements MouseListener,ComponentListener {
 				if(fileChooser.showOpenDialog(open)==JFileChooser.APPROVE_OPTION) {
 
 				}
-				if(fileChooser.getSelectedFile().getAbsolutePath().endsWith(".csv")) {
-					game = new Game(fileChooser.getSelectedFile().getAbsolutePath());
-					repaint();
+				if(fileChooser.getSelectedFile().getAbsolutePath()!=null) {
+					if(fileChooser.getSelectedFile().getAbsolutePath().endsWith(".csv")) {
+						play = new Play(fileChooser.getSelectedFile().getAbsolutePath());
+						play.setIDs(313340267,204324305,204397715);
+						playerButton=true;
+						repaint();
+					}
+					else JOptionPane.showMessageDialog(null, "Not a CSV file, Please try again");
 				}
-				else JOptionPane.showMessageDialog(null, "Not a CSV file, Please try again");
 			}
 
 		});
 		run.addActionListener(new ActionListener() {	//Starting The Game.
 			public void actionPerformed(ActionEvent e) {
-				if(game.getTargets().size()==0) {
-					JOptionPane.showMessageDialog(null, "The game is null. try again");
-					return;
+				if(play!=null&&player) {
+					play.start();
+					int i=0;
+					while(play.isRuning()) {
+						i++;
+	//					String info = play.getStatistics();
+						play.rotate(36*i); 
+						repaint();
+				//	System.out.println(info);
+			//			board_data = play.getBoard();
+//						for(int a=0;a<board_data.size();a++) {
+//							System.out.println(board_data.get(a));
+//						}
+					}
 				}
-				if(game.getPlayer()==null) {
-					JOptionPane.showMessageDialog(null, "The player is not located. try again");
-					return;
-				}
-				play.start();
-			}
-		});
-		player.addActionListener(new ActionListener() {	//Drawing pacmans.
-			public void actionPerformed(ActionEvent e) {
-				playerButton=true;
-			}
-		});
-		clear.addActionListener(new ActionListener() {	//Clearing The screen from the Images
-			public void actionPerformed(ActionEvent e) {
-				game.clear();
-				repaint();
+				else JOptionPane.showMessageDialog(null, "No game was loaded yet.");
 			}
 		});
 	}
@@ -161,24 +166,25 @@ public class MyFrame extends JFrame implements MouseListener,ComponentListener {
 	 */
 	public  void paint(Graphics g) {
 		g.drawImage(myImage, 8,53, this.getWidth()-16,this.getHeight()-61,this);//Drawing the map image
-		if(game.getTargets()!=null) {//if pacman list is not null enter
-			Iterator<Packman> itP=game.getRobots().iterator();// iterator for pacman
-			if(game.getTargets()!=null) {
-				Iterator<Fruit> itF=game.getTargets().iterator(); // iterator for fruit
-				while(itP.hasNext()) {//Drawing the Pcamans.
-					Packman temp=itP.next();
-					Point3D pixelPoint = map.coords2pixels(temp.getLocation());
-					int x = (int)(pixelPoint.x()*(width/imgwidth));//convert the point to pixel depends on the img size
-					int y = (int)(pixelPoint.y()*(height/imgheight));
-					g.drawImage(playerImg, x, y, playerImg.getWidth(), playerImg.getHeight(), this);
-				}
-
-				while(itF.hasNext()) {//Drawing the Fruits.
-					Fruit temp = itF.next();
-					Point3D pixelPoint = map.coords2pixels(temp.getLocation());
-					int x = (int)(pixelPoint.x()*(width/imgwidth));
-					int y = (int)(pixelPoint.y()*(height/imgheight));
-					g.drawImage(FruitImg, x, y, FruitImg.getWidth(), FruitImg.getHeight(), this);
+		if(play!=null) {
+			ArrayList<String> board = play.getBoard();
+			for(String s: board) {
+				String[] line = s.split(",");
+				Point3D gps = new Point3D(Double.parseDouble(line[2]),Double.parseDouble(line[3]));
+				Point3D pixelPoint = map.coords2pixels(gps); 
+				int x = (int)(pixelPoint.x()*(width/imgwidth));//convert the point to pixel depends on the img size
+				int y = (int)(pixelPoint.y()*(height/imgheight));
+				if(s.charAt(0)=='M') g.drawImage(playerImg, x-16, y-16, playerImg.getWidth(), playerImg.getHeight(), this);
+				else if(s.charAt(0)=='P') g.drawImage(pacmanImg, x, y, pacmanImg.getWidth(), pacmanImg.getHeight(), this);
+				else if(s.charAt(0)=='F') g.drawImage(FruitImg, x, y, FruitImg.getWidth(), FruitImg.getHeight(), this);
+				else if(s.charAt(0)=='G')g.drawImage(ghostImg, x, y, ghostImg.getWidth(), ghostImg.getHeight(), this);
+				else if(s.charAt(0)=='B') {
+					Point3D lBottom = map.coords2pixels(new Point3D(Double.parseDouble(line[2]),Double.parseDouble(line[3])));
+					Point3D rTop = map.coords2pixels(new Point3D(Double.parseDouble(line[5]),Double.parseDouble(line[6])));
+					Point3D lTop = new Point3D(lBottom.x(),rTop.y());
+					int recWidth =(int)(map.distBetPixels(rTop, lTop));
+					int recHeight =(int)(map.distBetPixels(lTop,lBottom));
+					g.fillRect((int)lTop.x(),(int) lTop.y(), recWidth, recHeight);	
 				}
 			}
 		}
@@ -190,8 +196,12 @@ public class MyFrame extends JFrame implements MouseListener,ComponentListener {
 		int y=(int)(e.getY()/(height/imgheight));
 		Point3D p = new Point3D(x, y);
 		Point3D gpsPoint = map.pixels2coords(p);//get the point as coords
-		if(playerButton) {//if true than we add a pacman
+		if(playerButton&&!play.isRuning()) {//if true than we add a pacman
 			play.setInitLocation(gpsPoint.x(),gpsPoint.y());
+			player = true;
+		}
+		if(play.isRuning()) {
+			
 		}
 		repaint();
 	}
@@ -220,7 +230,7 @@ public class MyFrame extends JFrame implements MouseListener,ComponentListener {
 	public void componentShown(ComponentEvent arg0) {}
 
 	public static void main(String[] args) {
-		MyFrame window = new MyFrame("Ariel1.png", new Point3D(32.10566,35.20238), new Point3D(32.10191,35.21237),new Point3D(32.10566,35.21241));
+		MyFrame window = new MyFrame("data//Ariel1.png", new Point3D(32.10566,35.20238), new Point3D(32.10191,35.21237),new Point3D(32.10566,35.21241));
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setVisible(true);
 		window.pack();
