@@ -16,6 +16,12 @@ public class Game {
 	private ArrayList<Ghost> gList;
 	private ArrayList<Block> bList;
 	
+	public Game() {
+		pList = new ArrayList<Pacman>();
+		fList = new ArrayList<Fruit>();
+		bList = new ArrayList<Block>();
+		gList = new ArrayList<Ghost>();
+	}
 	/**
 	 * copy constructor
 	 * @param game copy from this object
@@ -27,6 +33,7 @@ public class Game {
 		bList = new ArrayList<Block>(game.bList());
 		gList = new ArrayList<Ghost>(game.gList());
 	}
+
 	/**
 	 * This function give the user the option to use the ArrayList methods
 	 * @return ArrayList<Pacman>
@@ -62,19 +69,19 @@ public class Game {
 	public void setBoardData(ArrayList<String> board) {
 		for(String line: board) {
 			String[] data = line.split(",");
-			if(line.startsWith("P")) {
+			if(line.charAt(0)=='P') {
 				pList.add(new Pacman(data[1], data[2], data[3], data[4], data[5], data[6]));
 			}
-			else if(line.startsWith("M")) {
+			else if(line.charAt(0)=='M') {
 				playa = new Player(data[1], data[2], data[3], data[4], data[5]);
 			}
-			else if(line.startsWith("F")) {
+			else if(line.charAt(0)=='F') {
 				fList.add(new Fruit(data[1], data[2], data[3], data[4], data[5]));
 			}
-			else if(line.startsWith("G")) {
+			else if(line.charAt(0)=='G') {
 				gList.add(new Ghost(data[1], data[2], data[3], data[4], data[5], data[6]));
 			}
-			else if(line.startsWith("B")) {
+			else if(line.charAt(0)=='B') {
 				bList.add(new Block(data[1], data[2], data[3], data[4], data[5], data[6], data[7]));
 			}
 		}
