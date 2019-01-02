@@ -16,24 +16,33 @@ import Geom.Point3D;
  *@author Amitai
  */
 public class Game {
-
+	
+	private Player playa;
 	private ArrayList<Pacman> pList;
 	private ArrayList<Fruit> fList;
+	private ArrayList<Ghost> gList;
+	private ArrayList<Blocks> bList;
 
 	/**
 	 * constructor
 	 */
 	public Game() {
+		playa = new Player();
 		pList = new ArrayList<Pacman>();
 		fList = new ArrayList<Fruit>();
+		bList = new ArrayList<Blocks>();
+		gList = new ArrayList<Ghost>();
 	}
 	/**
 	 * copy constructor
 	 * @param game copy from this object
 	 */
 	public Game(Game game) {
-		pList=new ArrayList<Pacman>(game.pList());
-		fList=new ArrayList<Fruit>(game.fList());
+		playa = new Player(game.player());
+		pList = new ArrayList<Pacman>(game.pList());
+		fList = new ArrayList<Fruit>(game.fList());
+		bList = new ArrayList<Blocks>(game.bList());
+		gList = new ArrayList<Ghost>(game.gList());
 	}
 	/**
 	 * This function give the user the option to use the ArrayList methods
@@ -50,63 +59,81 @@ public class Game {
 		return fList;
 	}
 	/**
+	 * This function give the user the option to use the ArrayList methods
+	 * @return ArrayList<Blocks>
+	 */
+	public ArrayList<Blocks> bList() {
+		return bList;
+	}
+	/**
+	 * This function give the user the option to use the ArrayList methods
+	 * @return ArrayList<Ghost>
+	 */
+	public ArrayList<Ghost> gList() {
+		return gList;
+	}
+	
+	public Player player() {
+		return playa;
+	}
+	/**
 	 * This method take a csv file, and read it's information into the Game ArrayLists
 	 * @param path , is the folder path to the file.
 	 */
-	public void csvToGame(String path) {
-		String csvFile = path;
-		String line = ""; //saves each line
-		String type=""; // will tell us if it's a packman or a fruit
-		int row = 1;
-
-		try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
-			while ((line = br.readLine()) != null) {
-				String[] data = line.split(",");
-				if(row>1) {//first line is headlines
-					type = data[0];// determine the type
-					if(type.equals("P")) {//adding packman
-						this.pList.add(new Pacman (data[1],data[2],data[3],data[4],data[5],data[6]));
-					}
-					else if (type.equals("F")) {//adding Fruits
-						this.fList.add(new Fruit(data[1],data[2],data[3],data[4],data[5]));
-					}
-				}
-				row++;
-			}
-		} 
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	/**
-	 * This method take's a Game class, and read it's information into the a selected csv file.
-	 * @param path , is the folder path to the file.
-	 */
-	public void GameToCsv(String path) { 
-		String fileName = path+".csv";
-		PrintWriter pw = null;
-		try 
-		{
-			pw = new PrintWriter(new File(fileName));
-		} 
-		catch (FileNotFoundException e) 
-		{
-			e.printStackTrace();
-		}
-		StringBuilder sb0 = new StringBuilder();
-		sb0.append("Type, id, Lat, Lon, Alt, speed\\weight, Radius,"+ pList.size()+","+fList.size()+"\n");//printing headlines
-		pw.write(sb0.toString());
-		StringBuilder sb1 = new StringBuilder();
-		for(Pacman p: pList) {//adding all the pacmans
-			sb1.append("P,"+p.getID()+","+((Point3D) p.getPoint()).x()+","+((Point3D) p.getPoint()).y()+","+((Point3D) p.getPoint()).z()+","+p.getSpeed()+","+p.getRadius()+"\n");
-		}
-		pw.write(sb1.toString());
-		StringBuilder sb2 = new StringBuilder();
-		for(Fruit f:fList) {//adding all the fruits
-			sb2.append("P,"+f.getID()+","+((Point3D) f.getPoint()).x()+","+((Point3D) f.getPoint()).y()+","+((Point3D) f.getPoint()).z()+","+f.getWeight()+","+"\n");
-		}
-		pw.write(sb2.toString());
-		pw.close();//closing the file
-	}
+//	public void csvToGame(String path) {
+//		String csvFile = path;
+//		String line = ""; //saves each line
+//		String type=""; // will tell us if it's a packman or a fruit
+//		int row = 1;
+//
+//		try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
+//			while ((line = br.readLine()) != null) {
+//				String[] data = line.split(",");
+//				if(row>1) {//first line is headlines
+//					type = data[0];// determine the type
+//					if(type.equals("P")) {//adding packman
+//						this.pList.add(new Pacman (data[1],data[2],data[3],data[4],data[5],data[6]));
+//					}
+//					else if (type.equals("F")) {//adding Fruits
+//						this.fList.add(new Fruit(data[1],data[2],data[3],data[4],data[5]));
+//					}
+//				}
+//				row++;
+//			}
+//		} 
+//		catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//	}
+//	/**
+//	 * This method take's a Game class, and read it's information into the a selected csv file.
+//	 * @param path , is the folder path to the file.
+//	 */
+//	public void GameToCsv(String path) { 
+//		String fileName = path+".csv";
+//		PrintWriter pw = null;
+//		try 
+//		{
+//			pw = new PrintWriter(new File(fileName));
+//		} 
+//		catch (FileNotFoundException e) 
+//		{
+//			e.printStackTrace();
+//		}
+//		StringBuilder sb0 = new StringBuilder();
+//		sb0.append("Type, id, Lat, Lon, Alt, speed\\weight, Radius,"+ pList.size()+","+fList.size()+"\n");//printing headlines
+//		pw.write(sb0.toString());
+//		StringBuilder sb1 = new StringBuilder();
+//		for(Pacman p: pList) {//adding all the pacmans
+//			sb1.append("P,"+p.getID()+","+((Point3D) p.getPoint()).x()+","+((Point3D) p.getPoint()).y()+","+((Point3D) p.getPoint()).z()+","+p.getSpeed()+","+p.getRadius()+"\n");
+//		}
+//		pw.write(sb1.toString());
+//		StringBuilder sb2 = new StringBuilder();
+//		for(Fruit f:fList) {//adding all the fruits
+//			sb2.append("P,"+f.getID()+","+((Point3D) f.getPoint()).x()+","+((Point3D) f.getPoint()).y()+","+((Point3D) f.getPoint()).z()+","+f.getWeight()+","+"\n");
+//		}
+//		pw.write(sb2.toString());
+//		pw.close();//closing the file
+//	}
 
 }
