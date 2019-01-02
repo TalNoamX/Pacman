@@ -21,7 +21,7 @@ public class Game {
 	private ArrayList<Pacman> pList;
 	private ArrayList<Fruit> fList;
 	private ArrayList<Ghost> gList;
-	private ArrayList<Blocks> bList;
+	private ArrayList<Block> bList;
 
 	/**
 	 * constructor
@@ -30,7 +30,7 @@ public class Game {
 		playa = new Player();
 		pList = new ArrayList<Pacman>();
 		fList = new ArrayList<Fruit>();
-		bList = new ArrayList<Blocks>();
+		bList = new ArrayList<Block>();
 		gList = new ArrayList<Ghost>();
 	}
 	
@@ -42,7 +42,7 @@ public class Game {
 		playa = new Player(game.player());
 		pList = new ArrayList<Pacman>(game.pList());
 		fList = new ArrayList<Fruit>(game.fList());
-		bList = new ArrayList<Blocks>(game.bList());
+		bList = new ArrayList<Block>(game.bList());
 		gList = new ArrayList<Ghost>(game.gList());
 	}
 	/**
@@ -63,7 +63,7 @@ public class Game {
 	 * This function give the user the option to use the ArrayList methods
 	 * @return ArrayList<Blocks>
 	 */
-	public ArrayList<Blocks> bList() {
+	public ArrayList<Block> bList() {
 		return bList;
 	}
 	/**
@@ -77,6 +77,34 @@ public class Game {
 	public Player player() {
 		return playa;
 	}
+	public void setBoardData(ArrayList<String> board) {
+		for(String line: board) {
+			String[] data = line.split(",");
+			if(line.startsWith("P")) {
+				pList.add(new Pacman(data[1], data[2], data[3], data[4], data[5], data[6]));
+			}
+			else if(line.startsWith("M")) {
+				playa = new Player(data[1], data[2], data[3], data[4], data[5]);
+			}
+			else if(line.startsWith("F")) {
+				fList.add(new Fruit(data[1], data[2], data[3], data[4], data[5]));
+			}
+			else if(line.startsWith("G")) {
+				gList.add(new Ghost(data[1], data[2], data[3], data[4], data[5], data[6]));
+			}
+			else if(line.startsWith("B")) {
+				bList.add(new Block(data[1], data[2], data[3], data[4], data[5], data[6], data[7]));
+			}
+		}
+	}
+	public void clear() {
+		playa=null;
+		pList.clear();
+		fList.clear();
+		bList.clear();
+		gList.clear();
+	}
+	
 	/**
 	 * This method take a csv file, and read it's information into the Game ArrayLists
 	 * @param path , is the folder path to the file.
