@@ -1,24 +1,19 @@
 package Maps;
-import java.awt.Color;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import Geom.Point3D;
 import Robot.Play;
-import Geom.*;
-import GIS.*;
 import GameData.Block;
 import GameData.Fruit;
 import GameData.Game;
 import GameData.Ghost;
 import GameData.Pacman;
-import Server.*;
 
 /**
  * A GUI class that presents the Game.
@@ -136,9 +131,9 @@ public class MyFrame extends JFrame implements MouseListener,ComponentListener {
 				if(fileChooser.getSelectedFile().getAbsolutePath()!=null) {
 					if(fileChooser.getSelectedFile().getAbsolutePath().endsWith(".csv")) {
 						play = new Play(fileChooser.getSelectedFile().getAbsolutePath());
+						playerButton=true;
 						game.setBoardData(play.getBoard());
 						play.setIDs(313340267,204324305,204397715);
-						playerButton=true;
 						repaint();
 					}
 					else JOptionPane.showMessageDialog(null, "Not a CSV file, Please try again");
@@ -181,30 +176,32 @@ public class MyFrame extends JFrame implements MouseListener,ComponentListener {
 	 */
 	public  void paint(Graphics g) {
 		g.drawImage(myImage, 8,53, this.getWidth()-16,this.getHeight()-61,this);//Drawing the map image
-		if(play!=null&&game!=null) {
-			game.clear();
+		if(play!=null) {
+	//		game.clear();
 			game.setBoardData(play.getBoard());
+			if(player) {
 			Point3D pixle = framePoint(game.player().getPoint());
 			g.drawImage(playerImg, (int)pixle.x()-16, (int)pixle.y()-16, playerImg.getWidth(),  playerImg.getHeight(),this);
+			}
 			for(Pacman p: game.pList()) {
-				pixle = framePoint(p.getPoint());
+				Point3D pixle = framePoint(p.getPoint());
 				g.drawImage(pacmanImg, (int)pixle.x(), (int)pixle.y(), pacmanImg.getWidth(), pacmanImg.getHeight(), this);
 			}
 			for(Fruit f: game.fList()) {
-				pixle = framePoint(f.getPoint());
+				Point3D pixle = framePoint(f.getPoint());
 				g.drawImage(FruitImg, (int)pixle.x(), (int)pixle.y(), FruitImg.getWidth(), FruitImg.getHeight(), this);
 			}
 			for(Ghost gh: game.gList()) {
-				pixle = framePoint(gh.getPoint());
+				Point3D pixle = framePoint(gh.getPoint());
 				g.drawImage(ghostImg, (int)pixle.x(), (int)pixle.y(), ghostImg.getWidth(), ghostImg.getHeight(), this);
 			}
 			for(Block b: game.bList()) {
 				Point3D lBottom = map.coords2pixels(b.GetBottom());
 				Point3D rTop = map.coords2pixels(b.GetTop());
 				Point3D lTop = new Point3D(lBottom.x(),rTop.y());
-				int recWidth = (int)((map.distBetPixels(rTop, lTop))*(width/imgwidth));
-				int recHeight =(int)((map.distBetPixels(lTop,lBottom))*(width/imgwidth));
-				g.fillRect((int)lTop.x(),(int) lTop.y(), recWidth, recHeight);	
+				int recWidth = (int) Math.abs(rTop.x()-lTop.x());
+				int recHeight =(int) Math.abs(lTop.y()-lBottom.y());
+				g.fillRect((int)lTop.x()-20,(int) lTop.y()+50, recWidth, recHeight);	
 			}
 		}
 	}
@@ -215,11 +212,13 @@ public class MyFrame extends JFrame implements MouseListener,ComponentListener {
 		int y=(int)(e.getY()/(height/imgheight));
 		Point3D p = new Point3D(x, y);
 		Point3D gpsPoint = map.pixels2coords(p);//get the point as coords
-		if(playerButton&&!play.isRuning()) {//if true than we add a pacman
+		if(playerButton) {//if true than we add a pacman
 			play.setInitLocation(gpsPoint.x(),gpsPoint.y());
+			game.player().setPoint(gpsPoint);
 			player = true;
+			repaint();
 		}
-		if(play.isRuning()) {
+		if(play!=null&&play.isRuning()) {
 			ArrayList<String> board = play.getBoard();
 			String[] me = board.get(0).split(",");
 			game.player().setPoint(new Point3D(Double.parseDouble(me[0]),Double.parseDouble(me[1])));
