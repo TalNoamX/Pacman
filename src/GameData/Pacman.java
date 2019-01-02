@@ -55,13 +55,13 @@ public class Pacman {
 	 * Copy constructor
 	 * @param Pacman, the pacman we copy from.
 	 */
-	public Pacman(Pacman Pacman) {
-		this.time=Pacman.time;
-		this.point=new Point3D(Pacman.point);
-		this.ID=Pacman.ID;
-		this.speed=Pacman.speed;
-		this.radius=Pacman.radius;
-		this.score=Pacman.score;
+	public Pacman(Pacman pacman) {
+		this.time=pacman.time;
+		this.point=new Point3D(pacman.point);
+		this.ID=pacman.ID;
+		this.speed=pacman.speed;
+		this.radius=pacman.radius;
+		this.score=pacman.score;
 	}
 	/**
 	 * addScore get's a fruit weight and add it to the total pacman's score  
