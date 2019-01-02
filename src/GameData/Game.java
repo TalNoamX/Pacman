@@ -33,6 +33,7 @@ public class Game {
 		bList = new ArrayList<Blocks>();
 		gList = new ArrayList<Ghost>();
 	}
+	
 	/**
 	 * copy constructor
 	 * @param game copy from this object
