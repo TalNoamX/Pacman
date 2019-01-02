@@ -189,7 +189,7 @@ public class MyFrame extends JFrame implements MouseListener,ComponentListener {
 			}
 		}
 	}
-
+	
 	@Override
 	public void mouseClicked(MouseEvent e) {//get pacman and fruit with mouse click
 		int x=(int)(e.getX()/(width/imgwidth));//derivative the coords with imag size so when we multiply it in paint it will be where it shuld be
@@ -201,7 +201,16 @@ public class MyFrame extends JFrame implements MouseListener,ComponentListener {
 			player = true;
 		}
 		if(play.isRuning()) {
-			
+			ArrayList<String> board = play.getBoard();
+			for(String s: board) {
+				if(s.charAt(0)=='M') {
+					String[] line = s.split(",");
+					Point3D Me = new Point3D(Double.parseDouble(line[2]),Double.parseDouble(line[3]));
+					Me = map.coords2pixels(Me);
+					double azimuth=map.AzimuthBetPixels(p, Me);
+					play.rotate(azimuth);
+				}
+			}
 		}
 		repaint();
 	}
