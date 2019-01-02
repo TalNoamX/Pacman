@@ -189,7 +189,7 @@ public class MyFrame extends JFrame implements MouseListener,ComponentListener {
 			}
 		}
 	}
-
+	
 	@Override
 	public void mouseClicked(MouseEvent e) {//get pacman and fruit with mouse click
 		int x=(int)(e.getX()/(width/imgwidth));//derivative the coords with imag size so when we multiply it in paint it will be where it shuld be
