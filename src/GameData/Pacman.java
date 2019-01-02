@@ -46,7 +46,8 @@ public class Pacman {
 		double dLat = Double.parseDouble(lat);
 		double dAlt = Double.parseDouble(alt);
 		double dLon = Double.parseDouble(lon);
-		point=new Point3D(dLat,dLon,dAlt);		this.setID(id);
+		point=new Point3D(dLat,dLon,dAlt);		
+		this.setID(id);
 		this.setRadius(rad);
 		this.setSpeed(sp);
 		score = 0;
