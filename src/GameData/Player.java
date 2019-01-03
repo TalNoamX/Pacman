@@ -10,6 +10,14 @@ public class Player {
 	private final int ID=0;
 	private int score;
 	
+	public Player() {
+		time = new timeData();
+		point = new Point3D(32.10566,35.20238);
+		speed=20;
+		radius=1;
+		score = 0;
+	}
+	
 	public Player(double lat ,double lon , double alt, double sp ,double rad) {
 		time = new timeData();
 		point = new Point3D(lat,lon,alt);
@@ -40,7 +48,7 @@ public class Player {
 	}
 	
 	public void setPoint(Point3D p) {
-		point = new Point3D(p);
+		point = new Point3D(p.x(),p.y());
 	}
 
 	private void setSpeed(String sp) {

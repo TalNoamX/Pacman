@@ -5,6 +5,8 @@ import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import Geom.Point3D;
@@ -44,6 +46,7 @@ public class MyFrame extends JFrame implements MouseListener,ComponentListener {
 	int imgwidth;// The map image width
 	private Play play;
 	private boolean player;
+	private double azimuth;
 
 	/**
 	 * 
@@ -121,6 +124,7 @@ public class MyFrame extends JFrame implements MouseListener,ComponentListener {
 	public void setActionListeners() {
 		loadCSV.addActionListener(new ActionListener() {	//Loading CSV game files usinf FileChooser 
 			public void actionPerformed(ActionEvent e) {
+				game.clear();
 				JButton open = new JButton();
 				JFileChooser fileChooser = new JFileChooser();
 				fileChooser.setCurrentDirectory(new java.io.File("þþDocuments"));
@@ -145,17 +149,10 @@ public class MyFrame extends JFrame implements MouseListener,ComponentListener {
 			public void actionPerformed(ActionEvent e) {
 				if(play!=null&&player) {
 					play.start();
-					int i=0;
 					while(play.isRuning()) {
-						i++;
-						//					String info = play.getStatistics();
-						play.rotate(36*i); 
+						play.rotate(azimuth); 
 						repaint();
-						//	System.out.println(info);
-						//			board_data = play.getBoard();
-						//						for(int a=0;a<board_data.size();a++) {
-						//							System.out.println(board_data.get(a));
-						//						}
+
 					}
 				}
 				else JOptionPane.showMessageDialog(null, "No game was loaded yet.");
@@ -163,13 +160,6 @@ public class MyFrame extends JFrame implements MouseListener,ComponentListener {
 		});
 	}
 
-	private Point3D framePoint(Point3D gps) {
-		Point3D pixelPoint = map.coords2pixels(gps); 
-		int x = (int)(pixelPoint.x()*(width/imgwidth));//convert the point to pixel depends on the img size
-		int y = (int)(pixelPoint.y()*(height/imgheight));
-		Point3D framePoint = new Point3D(x,y);
-		return framePoint;
-	}
 	/**
 	 *  Drawing the maps image, and painting the pacman and the fruits.
 	 *  @param g Graphics object that will draw everything we need.
@@ -177,31 +167,44 @@ public class MyFrame extends JFrame implements MouseListener,ComponentListener {
 	public  void paint(Graphics g) {
 		g.drawImage(myImage, 8,53, this.getWidth()-16,this.getHeight()-61,this);//Drawing the map image
 		if(play!=null) {
-	//		game.clear();
 			game.setBoardData(play.getBoard());
-			if(player) {
-			Point3D pixle = framePoint(game.player().getPoint());
-			g.drawImage(playerImg, (int)pixle.x()-16, (int)pixle.y()-16, playerImg.getWidth(),  playerImg.getHeight(),this);
+			Point3D pixelPoint = map.coords2pixels(game.player().getPoint()); 
+			int x = (int)(pixelPoint.x()*(width/imgwidth));//convert the point to pixel depends on the img size
+			int y = (int)(pixelPoint.y()*(height/imgheight));
+			g.drawImage(playerImg, x-16, y-16, playerImg.getWidth(),  playerImg.getHeight(),this);
+			if(game.pList()!=null) {
+				for(Pacman p: game.pList()) {
+					pixelPoint = map.coords2pixels(p.getPoint()); 
+					x = (int)(pixelPoint.x()*(width/imgwidth));//convert the point to pixel depends on the img size
+					y = (int)(pixelPoint.y()*(height/imgheight));
+					g.drawImage(pacmanImg, x, y, pacmanImg.getWidth(), pacmanImg.getHeight(), this);
+				}
 			}
-			for(Pacman p: game.pList()) {
-				Point3D pixle = framePoint(p.getPoint());
-				g.drawImage(pacmanImg, (int)pixle.x(), (int)pixle.y(), pacmanImg.getWidth(), pacmanImg.getHeight(), this);
+			if(game.fList()!=null) {
+				for(Fruit f: game.fList()) {
+					pixelPoint = map.coords2pixels(f.getPoint()); 
+					x = (int)(pixelPoint.x()*(width/imgwidth));//convert the point to pixel depends on the img size
+					y = (int)(pixelPoint.y()*(height/imgheight));
+					g.drawImage(FruitImg, x ,y, FruitImg.getWidth(), FruitImg.getHeight(), this);
+				}
 			}
-			for(Fruit f: game.fList()) {
-				Point3D pixle = framePoint(f.getPoint());
-				g.drawImage(FruitImg, (int)pixle.x(), (int)pixle.y(), FruitImg.getWidth(), FruitImg.getHeight(), this);
+			if(game.gList()!=null) {
+				for(Ghost gh: game.gList()) {
+					pixelPoint = map.coords2pixels(gh.getPoint()); 
+					x = (int)(pixelPoint.x()*(width/imgwidth));//convert the point to pixel depends on the img size
+					y = (int)(pixelPoint.y()*(height/imgheight));
+					g.drawImage(ghostImg,x, y, ghostImg.getWidth(), ghostImg.getHeight(), this);
+				}
 			}
-			for(Ghost gh: game.gList()) {
-				Point3D pixle = framePoint(gh.getPoint());
-				g.drawImage(ghostImg, (int)pixle.x(), (int)pixle.y(), ghostImg.getWidth(), ghostImg.getHeight(), this);
-			}
-			for(Block b: game.bList()) {
-				Point3D lBottom = map.coords2pixels(b.GetBottom());
-				Point3D rTop = map.coords2pixels(b.GetTop());
-				Point3D lTop = new Point3D(lBottom.x(),rTop.y());
-				int recWidth = (int) Math.abs(rTop.x()-lTop.x());
-				int recHeight =(int) Math.abs(lTop.y()-lBottom.y());
-				g.fillRect((int)lTop.x()-20,(int) lTop.y()+50, recWidth, recHeight);	
+			if(game.bList()!=null) {
+				for(Block b: game.bList()) {
+					Point3D lBottom = map.coords2pixels(b.GetBottom());
+					Point3D rTop = map.coords2pixels(b.GetTop());
+					Point3D lTop = new Point3D(lBottom.x(),rTop.y());
+					int recWidth = (int) Math.abs(rTop.x()-lTop.x());
+					int recHeight =(int) Math.abs(lTop.y()-lBottom.y());
+					g.fillRect((int)lTop.x()-20,(int) lTop.y()+50, recWidth, recHeight);	
+				}
 			}
 		}
 	}
@@ -212,21 +215,16 @@ public class MyFrame extends JFrame implements MouseListener,ComponentListener {
 		int y=(int)(e.getY()/(height/imgheight));
 		Point3D p = new Point3D(x, y);
 		Point3D gpsPoint = map.pixels2coords(p);//get the point as coords
-		if(playerButton) {//if true than we add a pacman
+		if(playerButton&&play.isRuning()==false) {
 			play.setInitLocation(gpsPoint.x(),gpsPoint.y());
 			game.player().setPoint(gpsPoint);
 			player = true;
-			repaint();
 		}
 		if(play!=null&&play.isRuning()) {
-			ArrayList<String> board = play.getBoard();
-			String[] me = board.get(0).split(",");
-			game.player().setPoint(new Point3D(Double.parseDouble(me[0]),Double.parseDouble(me[1])));
 			Point3D Me = map.coords2pixels(game.player().getPoint());
-			double azimuth=map.AzimuthBetPixels(p, Me);
-			play.rotate(azimuth);
-			repaint();
+			azimuth=map.AzimuthBetPixels(p, Me);
 		}
+		repaint();
 	}
 	public void componentResized(ComponentEvent e) {
 		width=e.getComponent().getWidth();

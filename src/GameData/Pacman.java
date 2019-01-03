@@ -103,7 +103,7 @@ public class Pacman {
 	}
 
 	public void setPoint(Point3D p) {
-		point = new Point3D(p);
+		point = new Point3D(p.x(),p.y());
 	}
 
 	private void setSpeed(String sp) {

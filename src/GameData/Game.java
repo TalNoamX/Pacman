@@ -17,6 +17,7 @@ public class Game {
 	private ArrayList<Block> bList;
 	
 	public Game() {
+		playa = new Player();
 		pList = new ArrayList<Pacman>();
 		fList = new ArrayList<Fruit>();
 		bList = new ArrayList<Block>();
@@ -72,9 +73,9 @@ public class Game {
 			if(line.charAt(0)=='P') {
 				pList.add(new Pacman(data[1], data[2], data[3], data[4], data[5], data[6]));
 			}
-			else if(line.charAt(0)=='M') {
-				playa = new Player(data[1], data[2], data[3], data[4], data[5]);
-			}
+//			else if(line.charAt(0)=='M') {
+//				playa = new Player(data[1], data[2], data[3], data[4], data[5]);
+//			}
 			else if(line.charAt(0)=='F') {
 				fList.add(new Fruit(data[1], data[2], data[3], data[4], data[5]));
 			}
@@ -87,7 +88,6 @@ public class Game {
 		}
 	}
 	public void clear() {
-		playa=null;
 		pList.clear();
 		fList.clear();
 		bList.clear();
