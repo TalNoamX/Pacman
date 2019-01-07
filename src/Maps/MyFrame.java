@@ -147,15 +147,16 @@ public class MyFrame extends JFrame implements MouseListener,ComponentListener {
 		});
 		run.addActionListener(new ActionListener() {	//Starting The Game.
 			public void actionPerformed(ActionEvent e) {
-				if(play!=null&&player) {
+			//	if(play!=null&&player) {
 					play.start();
-					while(play.isRuning()) {
+					while(game.fList().size()>0) {
 						play.rotate(azimuth); 
+						game.setBoardData(play.getBoard());
 						repaint();
 
 					}
-				}
-				else JOptionPane.showMessageDialog(null, "No game was loaded yet.");
+			//	}
+			//	else JOptionPane.showMessageDialog(null, "No game was loaded yet.");
 			}
 		});
 	}

@@ -1,5 +1,7 @@
 package ex4_example;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+
 import Robot.Play;
 /**
  * This is the basic example of how to work with the Ex4 "server" like system:
@@ -44,6 +46,7 @@ public class Ex4_Main_Example {
 		
 		// 6) Start the "server"
 		play1.start(); // default max time is 100 seconds (1000*100 ms).
+	
 		
 		// 7) "Play" as long as there are "fruits" and time
 	//	for(int i=0;i<10;i++) {
@@ -61,6 +64,8 @@ public class Ex4_Main_Example {
 			board_data = play1.getBoard();
 			for(int a=0;a<board_data.size();a++) {
 				System.out.println(board_data.get(a));
+				try { TimeUnit.MILLISECONDS.sleep(50);}
+				catch (InterruptedException e) {e.printStackTrace();}
 			}
 			System.out.println();
 		}
