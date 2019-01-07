@@ -1,5 +1,6 @@
-package Coords;
+package coords;
 
+import Coords.coords_converter;
 import Geom.Point3D;
 /**
  * A class that implements coords_conveter.

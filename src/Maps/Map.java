@@ -4,8 +4,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-import Coords.MyCoords;
+
 import Geom.Point3D;
+import coords.MyCoords;
 
 public class Map {
 
