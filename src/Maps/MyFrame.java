@@ -9,6 +9,10 @@ import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+
+import com.mysql.jdbc.TimeUtil;
+
+
 import Geom.Point3D;
 import Robot.Play;
 import GameData.Block;
@@ -37,6 +41,7 @@ public class MyFrame extends JFrame implements MouseListener,ComponentListener {
 	//Menu Items
 	private MenuItem loadCSV;
 	private MenuItem run;
+	private MenuItem ME;
 	//will tell us whether to add a pacman or a fruit when pressed
 	private boolean playerButton = false;
 	//ID for fruit and pamans in case the user is drawing it on the screen
@@ -47,6 +52,8 @@ public class MyFrame extends JFrame implements MouseListener,ComponentListener {
 	private Play play;
 	private boolean player;
 	private double azimuth;
+	private boolean flag;
+	
 
 	/**
 	 * 
@@ -81,8 +88,10 @@ public class MyFrame extends JFrame implements MouseListener,ComponentListener {
 		Menu menu1 = new Menu("File");  
 		loadCSV = new MenuItem("Load csv");
 		run = new MenuItem("Run");
+		ME=new MenuItem("set player");
 		menu1.add(loadCSV);
 		menu1.add(run);
+		menu1.add(ME);
 		menuBar.add(menu1);
 		this.setMenuBar(menuBar);
 	}
@@ -139,6 +148,7 @@ public class MyFrame extends JFrame implements MouseListener,ComponentListener {
 						game.setBoardData(play.getBoard());
 						play.setIDs(313340267,204324305,204397715);
 						repaint();
+						
 					}
 					else JOptionPane.showMessageDialog(null, "Not a CSV file, Please try again");
 				}
@@ -149,16 +159,15 @@ public class MyFrame extends JFrame implements MouseListener,ComponentListener {
 			public void actionPerformed(ActionEvent e) {
 			//	if(play!=null&&player) {
 					play.start();
-					while(game.fList().size()>0) {
-						play.rotate(azimuth); 
-						game.setBoardData(play.getBoard());
-						repaint();
-
-					}
-			//	}
+					playerButton=true;
+				
+					
+			
 			//	else JOptionPane.showMessageDialog(null, "No game was loaded yet.");
 			}
 		});
+		
+		
 	}
 
 	/**
@@ -212,6 +221,7 @@ public class MyFrame extends JFrame implements MouseListener,ComponentListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {//get pacman and fruit with mouse click
+		flag=true;
 		int x=(int)(e.getX()/(width/imgwidth));//derivative the coords with imag size so when we multiply it in paint it will be where it shuld be
 		int y=(int)(e.getY()/(height/imgheight));
 		Point3D p = new Point3D(x, y);
@@ -220,12 +230,19 @@ public class MyFrame extends JFrame implements MouseListener,ComponentListener {
 			play.setInitLocation(gpsPoint.x(),gpsPoint.y());
 			game.player().setPoint(gpsPoint);
 			player = true;
+			repaint();
 		}
-		if(play!=null&&play.isRuning()) {
+		else if(playerButton==true) {
+			flag=false;
 			Point3D Me = map.coords2pixels(game.player().getPoint());
 			azimuth=map.AzimuthBetPixels(p, Me);
+			azimuth=180+azimuth;
+			play.rotate(azimuth); 
+			repaint();
+			
+			
 		}
-		repaint();
+		
 	}
 	public void componentResized(ComponentEvent e) {
 		width=e.getComponent().getWidth();
@@ -248,6 +265,7 @@ public class MyFrame extends JFrame implements MouseListener,ComponentListener {
 	public void componentHidden(ComponentEvent arg0) {}
 	public void componentMoved(ComponentEvent arg0) {}
 	public void componentShown(ComponentEvent arg0) {}
+
 
 	public static void main(String[] args) {
 		MyFrame window = new MyFrame("data//Ariel1.png", new Point3D(32.10566,35.20238), new Point3D(32.10191,35.21237),new Point3D(32.10566,35.21241));

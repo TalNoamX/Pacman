@@ -1,6 +1,7 @@
 package GameData;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 /**
  * This class is a data structure for the game.
  * it keeps two ArrayLists, one for the fruits and one for the pacmans.
@@ -68,14 +69,18 @@ public class Game {
 		return playa;
 	}
 	public void setBoardData(ArrayList<String> board) {
+		pList.clear();
+		fList.clear();
+		gList.clear();
+		bList.clear();
 		for(String line: board) {
 			String[] data = line.split(",");
 			if(line.charAt(0)=='P') {
 				pList.add(new Pacman(data[1], data[2], data[3], data[4], data[5], data[6]));
 			}
-//			else if(line.charAt(0)=='M') {
-//				playa = new Player(data[1], data[2], data[3], data[4], data[5]);
-//			}
+		else if(line.charAt(0)=='M') {
+				playa = new Player(data[2], data[3], data[4], data[5], data[6]);
+			}
 			else if(line.charAt(0)=='F') {
 				fList.add(new Fruit(data[1], data[2], data[3], data[4], data[5]));
 			}
@@ -86,6 +91,10 @@ public class Game {
 				bList.add(new Block(data[1], data[2], data[3], data[4], data[5], data[6], data[7]));
 			}
 		}
+	}
+	
+	public void updatelock(ArrayList<String> board) {
+		
 	}
 	public void clear() {
 		pList.clear();
