@@ -4,15 +4,8 @@ import java.awt.event.*;
 import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
-
-import com.mysql.jdbc.TimeUtil;
-
-
 import Geom.Point3D;
 import Robot.Play;
 import GameData.Block;
@@ -52,9 +45,7 @@ public class MyFrame extends JFrame implements MouseListener,ComponentListener {
 	int imgheight;// The map image height
 	int imgwidth;// The map image width
 	private Play play;
-	private boolean player;
 	private double azimuth=0;
-	private boolean flag;
 	
 
 	/**
@@ -138,7 +129,7 @@ public class MyFrame extends JFrame implements MouseListener,ComponentListener {
 				game.clear();
 				JButton open = new JButton();
 				JFileChooser fileChooser = new JFileChooser();
-				fileChooser.setCurrentDirectory(new java.io.File("þþDocuments"));
+				fileChooser.setCurrentDirectory(new java.io.File("ï¿½ï¿½Documents"));
 				fileChooser.setDialogTitle("Load CSV");
 				if(fileChooser.showOpenDialog(open)==JFileChooser.APPROVE_OPTION) {
 
@@ -230,7 +221,6 @@ Image image = createImage(5000,5000);
 
 	@Override
 	public void mouseClicked(MouseEvent e) {//get pacman and fruit with mouse click
-		flag=true;
 		int x=(int)(e.getX()/(width/imgwidth));//derivative the coords with imag size so when we multiply it in paint it will be where it shuld be
 		int y=(int)(e.getY()/(height/imgheight));
 		Point3D p = new Point3D(x, y);
@@ -238,11 +228,9 @@ Image image = createImage(5000,5000);
 		if(playerButton&&play.isRuning()==false) {
 			play.setInitLocation(gpsPoint.x(),gpsPoint.y());
 			game.player().setPoint(gpsPoint);
-			player = true;
 			repaint();
 		}
 		else if(playerButton==true) {
-			flag=false;
 			Point3D Me = map.coords2pixels(game.player().getPoint());
 			azimuth=map.AzimuthBetPixels(p, Me);
 			azimuth=180+azimuth;

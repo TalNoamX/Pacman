@@ -1,7 +1,6 @@
 package GameData;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 /**
  * This class is a data structure for the game.
  * it keeps two ArrayLists, one for the fruits and one for the pacmans.

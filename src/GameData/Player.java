@@ -7,7 +7,6 @@ public class Player {
 	private Point3D point;
 	private double speed;
 	private double radius;
-	private final int ID=0;
 	private int score;
 	
 	public Player() {
