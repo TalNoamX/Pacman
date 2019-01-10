@@ -1,5 +1,6 @@
 package GameData;
 
+import Algorithms.Path;
 import Geom.Point3D;
 
 public class Player {
@@ -8,6 +9,7 @@ public class Player {
 	private double speed;
 	private double radius;
 	private int score;
+	private Path path;
 	
 	public Player() {
 		time = new timeData();
@@ -56,5 +58,12 @@ public class Player {
 
 	private void setRadius(String rad) {
 		radius = Double.parseDouble(rad);
+	}
+	
+	public Path getPath() {
+		return path;
+	}
+	public void setPath(Path p) {
+		path = new Path(p);
 	}
 }
